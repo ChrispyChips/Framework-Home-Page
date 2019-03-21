@@ -1,2 +1,2 @@
 require('../styles/index.scss');
-console.log('This is index.js');
+document.querySelector('.google-search').focus();
