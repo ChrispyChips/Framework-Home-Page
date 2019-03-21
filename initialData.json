@@ -1,0 +1,12 @@
+{
+  "pages": [
+    {
+      "page": "index",
+      "content": "Content from json for index"
+    },
+    {
+      "page": "test",
+      "content": "Content from json for test"
+    }
+  ]
+}
