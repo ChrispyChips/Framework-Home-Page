@@ -1,7 +1,3 @@
-@import url('https://fonts.googleapis.com/css?family=Roboto:400');
-$font: 'Roboto', sans-serif;
-$fontColour: #383838;
-
 h1,
 h2,
 h3,
@@ -51,9 +47,8 @@ p {
 }
 
 body {
-  font-family: $font;
   background-color: rgba(0, 0, 0, 0.57);
-  background-image: url('../assets/beetle.jpg');
+  background-image: url('https://images.ctfassets.net/aa6ykz6kypbo/3WPZXGeojTyK0NO9Yd4S47/c293fcb785cf31673e154c5b7068c707/beetle.jpg?w=1920&q=50&fit=fill');
   background-repeat: no-repeat;
   background-size: cover;
   background-position: 0 0;

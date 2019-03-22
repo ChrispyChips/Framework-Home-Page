@@ -5,10 +5,9 @@ const devMode = process.env.NODE_ENV !== 'production';
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-
+const WorkboxWebpackPlugin = require('workbox-webpack-plugin');
 const ImageminPlugin = require('imagemin-webpack-plugin').default;
 const CopyPlugin = require('copy-webpack-plugin');
-
 
 let generateHtmlPlugins = (templateDir) => {
   const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -50,26 +49,56 @@ module.exports = {
   plugins: [
     new CleanWebpackPlugin(),
     new webpack.HotModuleReplacementPlugin(),
-    // new CopyWebpackPlugin([
-    //     {from:'src/assets',to:'assets'}
-    // ]),
-    new MiniCssExtractPlugin({
-      filename: "[name].css",
-      chunkFilename: "[id].css"
-    }),
     new CopyWebpackPlugin([
       {
           from: path.resolve(__dirname, './src/assets/'),
           to: path.resolve(__dirname, './docs/assets/')
       }
     ]),
+    new CopyWebpackPlugin([
+      {
+          from: path.resolve(__dirname, './src/manifest.json'),
+          to: path.resolve(__dirname, './docs/manifest.json')
+      }
+    ]),
+
+  ].concat(
+    htmlPlugins,
+    new MiniCssExtractPlugin({
+      filename: devMode ? '[name].[hash].css' : '[name].[hash].css',
+      chunkFilename: devMode ? '[id].[hash].css' : '[id].[hash].css',
+    }),
     new ImageminPlugin({
         test: /\.(jpe?g|png|gif|svg)$/i,
         pngquant: {
             quality: '95-100'
         }
     }),
-  ].concat(htmlPlugins),
+    new WorkboxWebpackPlugin.InjectManifest({
+      swSrc: "./src/sw.js",
+      swDest: "sw.js",
+      include: [
+        /\.html$/,
+        /\.js$/,
+        /\.css$/,
+        /\.ico$/,
+        /\.json$/,
+        /\.png/,
+        /\.svg$/,
+        /\.gif$/,
+        /\.woff$/,
+        /\.ttf$/,
+        /\/workbox.*\/.*$/,
+        /css.*\.css$/,
+        /fonts.*\.(svg|eot|ttf|woff)$/,
+        /i18n.*\.json$/,
+        /img.*\.(svg|png|gif|jpeg|jpg)$/,
+      ],
+      exclude: [
+        /sw.js$/
+      ]
+    })
+  ),
   output: {
     filename: '[name].[hash].js',
     path: path.resolve(__dirname, 'docs')
@@ -100,7 +129,7 @@ module.exports = {
       {
         test: /\.(sa|sc|c)ss$/,
         use: [
-          devMode ? 'style-loader' : MiniCssExtractPlugin.loader,
+          MiniCssExtractPlugin.loader,
           'css-loader',
           'sass-loader',
         ],
